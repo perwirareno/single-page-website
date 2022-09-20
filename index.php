@@ -113,7 +113,7 @@
       <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
         <div class="navbar-nav ms-auto">
           <a href="" class="nav-item nav-link active">Beranda</a>
-          <a href="" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#modal-cari">Cari</a>
+          <a href="" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#modal-karir">Karir</a>
           <a href="#mengapa-kami" class="nav-item nav-link">Mengapa Kami</a>
           <div class="nav-item dropdown">
             <a
@@ -588,20 +588,47 @@
     <!-- Footer End -->
 
     <!-- Modal Start -->
-    <div class="modal fade" id="modal-cari" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-karir" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content popup-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Cari yang anda butuhkan</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Pilih karir yang match untuk anda</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body popup">
-            <form action="index.html">
-              <div class="input-icons">
-                <i class="fa fa-search icon"></i>
-                <input class="input-field" type="text" placeholder="Cari..." required>
-              </div>
-              <button type="submit" class="btn btn-primary btn-field">Cari</button>
+            <form action="index.php">
+              <table id="tabel-data">
+                  <thead>
+                      <tr>
+                          <th>Nama Divisi</th>
+                          <th>Posisi</th>
+                          <th>Gaji</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+                      include 'koneksi.php';
+                      $employee = mysqli_query(
+                        $koneksi,
+                        "SELECT 
+                            md.division,
+                            mp.position,
+                            mp.salary
+                        FROM master_division AS md
+                          INNER JOIN master_position AS mp ON md.id = mp.id_division
+                        ORDER BY md.id ASC"
+                      );
+                      while($row = mysqli_fetch_array($employee))
+                      {
+                          echo "<tr>
+                              <td>" .$row['division']. "</td>
+                              <td>" .$row['position']. "</td>
+                              <td>" ."Rp. ".number_format($row['salary'],2,",","."). "</td>
+                          </tr>";
+                      }
+                  ?>
+                  </tbody>
+              </table>
             </form>
           </div>
         </div>
@@ -626,5 +653,15 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <!-- Datatable -->
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#tabel-data').DataTable();
+        });
+    </script>
   </body>
 </html>
